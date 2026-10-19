@@ -2,16 +2,21 @@ import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
-
+import jwt from "jsonwebtoken";
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
-    const accessToeken = user.generateAccessToken();
+
+    if(!user){
+      throw new ApiError(400, "user not found")
+    }
+
+    const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
-    return { accessToeken, refreshToken };
+    return { accessToken, refreshToken };
   } catch (error) {
     throw new ApiError(
       500,
@@ -30,7 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const existUser = await User.findOne({ email: email.toLowerCase() });
 
   if (existUser) {
-    throw new ApiError(409, "User Allready exist");
+    throw new ApiError(409, "User Already exist");
   }
 
   const user = await User.create({
@@ -44,12 +49,11 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!createdUser) {
     throw new ApiError(
       500,
-      createdUser,
       "Something went wrong while creating user"
     );
   }
 
-  res.status(201).json(new ApiResponse(201, "User created successfully"));
+  res.status(201).json(new ApiResponse(201, createdUser, "User created successfully"));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -72,9 +76,8 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid User credentials");
   }
 
-  const { accessToeken, refreshToken } = await generateAccessAndRefreshTokens(
-    user,
-    _id
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    user._id
   );
 
   const loggedInUser = await User.findById(user._id).select(
@@ -89,12 +92,12 @@ const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToeken, options)
+    .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(
         200,
-        { user: loggedInUser, accessToeken, refreshToken },
+        { user: loggedInUser, accessToken, refreshToken },
         "User loggedIn successfully"
       )
     );
@@ -179,7 +182,7 @@ const currentUser = asyncHandler(async (req, res) => {
   const user = req.user;
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "Curresnt user fetched successfully"));
+    .json(new ApiResponse(200, user, "Current user fetched successfully"));
 });
 
 export { registerUser, loginUser, logoutUser, refreshAccessToken, currentUser };
