@@ -3,12 +3,13 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
 
-    if(!user){
-      throw new ApiError(400, "user not found")
+    if (!user) {
+      throw new ApiError(400, "user not found");
     }
 
     const accessToken = user.generateAccessToken();
@@ -47,13 +48,12 @@ const registerUser = asyncHandler(async (req, res) => {
   const createdUser = await User.findById(user._id).select("-password");
 
   if (!createdUser) {
-    throw new ApiError(
-      500,
-      "Something went wrong while creating user"
-    );
+    throw new ApiError(500, "Something went wrong while creating user");
   }
 
-  res.status(201).json(new ApiResponse(201, createdUser, "User created successfully"));
+  res
+    .status(201)
+    .json(new ApiResponse(201, createdUser, "User created successfully"));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -185,4 +185,45 @@ const currentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Current user fetched successfully"));
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, currentUser };
+const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  if (
+    [oldPassword, newPassword, confirmPassword].some((field) => !field?.trim())
+  ) {
+    throw new ApiError(400, "Passwords are required");
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(400, "Passwords do not match");
+  }
+
+  const currentUser = req.user;
+
+  if (!currentUser) {
+    throw new ApiError(401, "Invalid user");
+  }
+
+  const user = await User.findById(currentUser?._id);
+  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid old password");
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "password changed successfully"));
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  currentUser,
+  changePassword,
+};
