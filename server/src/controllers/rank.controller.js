@@ -18,17 +18,18 @@ const addKeyword = asyncHandler(async (req, res) => {
       const urlObj = new URL(url.startsWith("http") ? url : `https://${url}`);
       domain = urlObj.hostname.replace("www.", "");
     } catch (error) {
-      return res.json(new ApiResponse(400, "Invalid URL format"));
+      throw new ApiError(400, "Invalid URL format");
+      // return res.json(new ApiResponse(400, "Invalid URL format"));
     }
 
     // Check if already tracking this keyword+domain
-    const existring = await KeywordTracking.findOne({
+    const existing = await KeywordTracking.findOne({
       userId: req.userId,
-      keyword: keyword.toLowerCase().trim,
+      keyword: keyword.toLowerCase().trim(),
       domain,
     });
 
-    if (existring) {
+    if (existing) {
       throw new ApiError(400, "Already tracking this keyword for this domain");
     }
 
@@ -41,20 +42,85 @@ const addKeyword = asyncHandler(async (req, res) => {
       status: "checking",
     });
 
+    await keywordTracking(tracking);
     return res
       .status(201)
-      .json(new ApiResponse(tracking, "keyword tracking started"));
-    keywordTracking();
-  } catch (error) {}
+      .json(new ApiResponse(201, tracking, "keyword tracking started"));
+  } catch (error) {
+    console.error("Add keyword error : ", error.message);
+    if (error.code === 11000)
+      return res
+        .status(400)
+        .json({ success: false, message: "Already tracking this keyworf" });
+    throw new ApiError(409, "Server error");
+  }
 });
 
-const getKeywords = asyncHandler(async (req, res) => {});
+const getKeywords = asyncHandler(async (req, res) => {
+  try {
+    const keywords = await KeywordTracking.find({ userId: req.userId })
+      .sort({ createdAt: -1 })
+      .select("-rankHistory");
+    res.json({ success: true, keywords });
+  } catch (error) {
+    console.error("Get keywords error :", error.message);
+    throw new ApiError(500, "Server error");
+  }
+});
 
-const getKeyword = asyncHandler(async (req, res) => {});
+const getKeyword = asyncHandler(async (req, res) => {
+  try {
+    const tracking = await KeywordTracking.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!tracking)
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "keyword tracking noot found"));
+    res.json({ success: true, tracking });
+  } catch (error) {
+    console.error("Get keyword error :", error.message);
+    throw new ApiError(500, "Server error");
+  }
+});
 
-const refreshKeyword = asyncHandler(async (req, res) => {});
+const refreshKeyword = asyncHandler(async (req, res) => {
+  try {
+    const tracking = await KeywordTracking.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!tracking)
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "keyword tracking noot found"));
+    tracking.status = "checking";
+    await tracking.save();
+    res.json({ success: true, message: "Rank check started" });
+    keywordTracking(tracking);
+  } catch (error) {
+    console.error("Refresh keyword error :", error.message);
+    throw new ApiError(500, "Server error");
+  }
+});
 
-const deleteKeyword = asyncHandler(async (req, res) => {});
+const deleteKeyword = asyncHandler(async (req, res) => {
+  try {
+    const tracking = await KeywordTracking.findByIdAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!tracking)
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "keyword tracking noot found"));
+    res.json({ success: true, message: "Keyword tracking deleted" });
+  } catch (error) {
+    console.error("Delete keyword error :", error.message);
+    throw new ApiError(500, "Server error");
+  }
+});
 
 const toggleTracking = asyncHandler(async (req, res) => {});
 
