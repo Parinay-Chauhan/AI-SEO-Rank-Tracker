@@ -22,9 +22,16 @@ app.use(cookieParser());
 //  ------------------- import routes ----------------------
 
 import userRouter from "./routes/user.route.js";
+import rankRouter from "./routes/rank.route.js";
 
 //  --------------- routes declaration --------------------
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/rank", rankRouter);
+
+
 app.use(ErrorHandler);
+
+
+
 export { app };
