@@ -122,7 +122,26 @@ const deleteKeyword = asyncHandler(async (req, res) => {
   }
 });
 
-const toggleTracking = asyncHandler(async (req, res) => {});
+const toggleTracking = asyncHandler(async (req, res) => {
+  try {
+    const tracking = await KeywordTracking.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!tracking)
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "keyword tracking noot found"));
+
+    tracking.active = !tracking.active;
+    await tracking.save();
+
+    res.json({ success: true, tracking });
+  } catch (error) {
+    console.error("toggleTracking error :", error.message);
+    throw new ApiError(500, "Server error");
+  }
+});
 
 export {
   addKeyword,
