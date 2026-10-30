@@ -7,139 +7,112 @@ const bb = new Browserbase({
 
 // Search Google for a keyword and extract ranking result for a target domain
 
-export async function rankTracker(keyword, targetDomain) {
-  try {
-    // 1. Initialize Browserbase Session & Connect Playwright
+function normalizeDomain(value) {
+  const input = value.includes("://") ? value : `https://${value}`;
+  return new URL(input).hostname.replace(/^www\./, "").toLowerCase();
+}
 
+export async function rankTracker(keyword, targetDomain) {
+  let browser;
+
+  try {
     const session = await bb.sessions.create({
       browserSettings: { blockAds: true },
-      timeout: 60,
+      api_timeout: 300,
       keepAlive: false,
     });
-    let browser = await chromium.connectOverCDP(session.connectUrl);
-    const page = browser.contexts()[0].pages()[0];
+
+    browser = await chromium.connectOverCDP(session.connectUrl);
+
+    const page = browser.contexts()[0]?.pages()[0];
+    if (!page) {
+      throw new Error("Browser session did not provide a page");
+    }
+
     page.setDefaultNavigationTimeout(45000);
 
-    //  2. Initial Google Visit & Consent Handling
+    const cleanTarget = normalizeDomain(targetDomain);
+    const allResults = [];
+    let found = null;
 
-    await page.goto("https://www.google.com", { waitUntil: "networkidle" });
-    try {
-      const btn = await page.$(
-        'button[id="L2AGLB"], form[action*="consent"] button'
-      );
-      if (btn) {
-        await btn.click();
-        await page.waitForTimeout(1500);
-      }
-    } catch {}
-
-    let found = null,
-      allResult = [];
-
-    const cleanTarget = targetDomain.replace("www.", "").toLowerCase();
-
-    // 3. Search Loop: Itrate through up to 5 pages of Google results
-
+    // Har Google results page par jao aur usi page ke results process karo.
     for (let gPage = 0; gPage < 5; gPage++) {
       await page.goto(
         `https://www.google.com/search?q=${encodeURIComponent(keyword)}&start=${gPage * 10}&num=10&hl=en&gl=us`,
-        { waitUntil: "networkidle" }
+        { waitUntil: "domcontentloaded" }
       );
-    }
 
-    // 4. Page Extraction: Retry up to 3 times if results are not found
+      let pageResults = [];
 
-    let pageResult = [];
-    for (let retry = 0; retry < 3; retry++) {
-      try {
-        await page.waitForSelector("h3", { timeout: 8000 });
-        await page.waitForTimeout(15000);
-        pageResult = await page.evaluate(() =>
-          Array.from(document.querySelectorAll("h3"))
-            .map((h3) => {
-              let a = h3.closest("a");
-              if (!a) {
-                let p = h3.parentElement;
-                for (let j = 0; j < 5; j++, p = p.parentElement) {
-                  if (p.tagName === "A") {
-                    a = p;
-                    break;
-                  }
-                  const sub = p.querySelector("a[href]");
-                  if (sub && sub.contains(h3)) {
-                    a = sub;
-                    break;
-                  }
-                }
-              }
-              if (
-                !a ||
-                !a.href.startsWith("http") ||
-                a.href.includes("google.")
-              )
-                return null;
+      for (let retry = 0; retry < 3; retry++) {
+        try {
+          await page.waitForSelector("h3", { timeout: 10000 });
 
-              let s = "",
-                c = a.parentElement;
-              for (let j = 0; j < 6 && j++; c = c.parentElement) {
-                const txt = c.innerText || "";
-                if (txt.length > h3.innerText.length + 50) {
-                  s = (
-                    txt
-                      .split("\n")
-                      .find(
-                        (l) =>
-                          l.length > 30 &&
-                          !l.includes(h3.innerText.substring(0, 20))
-                      ) || ""
-                  )
-                    .trim()
-                    .substring(0, 300);
-                  if (s) break;
-                }
-              }
-              return {
-                url: a.href,
-                domain: new URL(a.href).hostname.replace("www.", ""),
-                title: h3.innerText.trim(),
-                snippet: s,
-              };
-            })
-            .filter(Boolean)
-        );
-        if (pageResult.length > 0) break;
-        await page.reload({ waitUntil: "networkidle" });
-      } catch (error) {
-        if (retry === 2) break;
-        await page.reload({ waitUntil: "networkidle" });
+          pageResults = await page.evaluate(() =>
+            Array.from(document.querySelectorAll("h3"))
+              .map((h3) => {
+                const anchor = h3.closest("a");
+                if (!anchor || !anchor.href.startsWith("http")) return null;
+
+                const url = anchor.href;
+                const domain = new URL(url).hostname
+                  .replace(/^www\./, "")
+                  .toLowerCase();
+
+                if (domain.includes("google.")) return null;
+
+                const container = anchor.parentElement?.parentElement;
+                const snippet =
+                  (container?.innerText || "")
+                    .split("\n")
+                    .find(
+                      (line) =>
+                        line.length > 30 &&
+                        !line.includes(h3.innerText.substring(0, 20))
+                    )
+                    ?.trim()
+                    .substring(0, 300) || "";
+
+                return {
+                  url,
+                  domain,
+                  title: h3.innerText.trim(),
+                  snippet,
+                };
+              })
+              .filter(Boolean)
+          );
+
+          if (pageResults.length > 0) break;
+        } catch {
+          // Retry this results page, up to three times.
+        }
+
+        if (retry < 2) await page.waitForTimeout(1000);
       }
-      if (!pageResult.length) break;
 
-      // 5. Result Synthesis: Update global results and check for target match
+      for (const result of pageResults) {
+        result.position = allResults.length + 1;
+        allResults.push(result);
 
-      for (const r of pageResult) {
-        r.position = allResult.length() + 1;
-        allResult.push(r);
-        if (
-          !found &&
-          (r.domain.toLowerCase().includes(cleanTarget) ||
-            cleanTarget.includes(r.domain.toLowerCase()))
-        ) {
-          found = { ...r, page: gPage + 1 };
+        const isTarget =
+          result.domain === cleanTarget ||
+          result.domain.endsWith(`.${cleanTarget}`);
+
+        if (isTarget) {
+          found = { ...result, page: gPage + 1 };
+          break;
         }
       }
+
       if (found) break;
-      await page.waitForTimeout(2000 + Math.random() * 2000);
     }
 
-    // 6. Finalization: Close browser and extract competitors
-
-    await browser.close();
-    const competitors = allResult
+    const competitors = allResults
       .filter(
-        (r) =>
-          !r.domain.toLowerCase().includes(cleanTarget) &&
-          !cleanTarget.includes(r.domain.toLowerCase())
+        (result) =>
+          result.domain !== cleanTarget &&
+          !result.domain.endsWith(`.${cleanTarget}`)
       )
       .slice(0, 10);
 
@@ -148,17 +121,20 @@ export async function rankTracker(keyword, targetDomain) {
       data: {
         keyword,
         targetDomain,
-        position: found?.position || null,
-        page: found?.page || null,
+        position: found?.position ?? null,
+        page: found?.page ?? null,
         title: found?.title || "",
         snippet: found?.snippet || "",
         competitors,
-        totalResultScanned: allResult.length,
+        totalResultScanned: allResults.length,
       },
     };
   } catch (error) {
-    console.error("Rank check : ", error.message);
-    if (browser) await browser.close().catch(() => {});
+    console.error("Rank check:", error.message);
     return { success: false, error: error.message };
+  } finally {
+    if (browser?.isConnected()) {
+      await browser.close().catch(() => {});
+    }
   }
 }
