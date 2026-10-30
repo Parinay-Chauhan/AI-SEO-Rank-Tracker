@@ -19,7 +19,7 @@ export async function keywordTracking(tracking) {
 
       tracking.currentPosition = result.data.position;
       tracking.currentPage = result.data.page;
-      tracking.compititors = result.data.competitors;
+      tracking.competitors = result.data.competitors;
       tracking.lastChecked = new Date();
       tracking.status = "completed";
 
@@ -36,17 +36,18 @@ export async function keywordTracking(tracking) {
       // Update history
 
       const historyEntry = {
-        data: today,
+        date: today,
         position: result.data.position,
         page: result.data.page,
         title: result.data.title,
         snippet: result.data.snippet,
       };
-      const idx = tracking.rankTracker.findIndex(
+      const idx = tracking.rankHistory.findIndex(
         (h) => h.date.toDateString() === today.toDateString()
       );
-      if (idx >= 0) tracking.rankTracker[idx] = historyEntry;
-      else tracking.rankTracker.push(historyEntry);
+      if (idx >= 0) {
+        tracking.rankHistory[idx] = historyEntry;
+      } else tracking.rankHistory.push(historyEntry);
     } else {
       tracking.status = "failed";
     }
@@ -54,7 +55,7 @@ export async function keywordTracking(tracking) {
     return result;
   } catch (error) {
     console.error("Rank update error : ", error.message);
-    tracking.status = "false";
+    tracking.status = "failed";
     await tracking.save().catch(() => {});
     return { success: false, error: error.message };
   }
