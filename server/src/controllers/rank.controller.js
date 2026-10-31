@@ -84,11 +84,12 @@ const getKeyword = asyncHandler(async (req, res) => {
     if (!tracking) {
       throw new ApiError(404, "Keyword tracking not found");
     }
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, tracking, "Keyword tracking fetched successfully")
-      );
+    return res.status(200).json({
+      statusCode: 200,
+      message: "Keyword tracking fetched successfully",
+      success: true,
+      tracking,
+    });
   } catch (error) {
     console.error("getKeyword error:", error.message);
     throw error;
