@@ -23,15 +23,14 @@ app.use(cookieParser());
 
 import userRouter from "./routes/user.route.js";
 import rankRouter from "./routes/rank.route.js";
+import analysisRouter from "./routes/analysis.route.js";
 
 //  --------------- routes declaration --------------------
 
 app.use("/api/v1/users", userRouter);
-app.use("/api/rank", rankRouter);
-
+app.use("/api/v1/rank", rankRouter);
+app.use("/api/v1/analysis", analysisRouter);
 
 app.use(ErrorHandler);
-
-
 
 export { app };
