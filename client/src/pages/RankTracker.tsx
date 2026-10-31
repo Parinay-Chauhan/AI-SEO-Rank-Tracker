@@ -64,10 +64,10 @@ export default function RankTracker() {
     try {
       const res = await api.get("/api/rank/list");
       if (res.data.success) {
-        setKeywords(res.data.keywords);
+        setKeywords(res.data.data);
       }
     } catch (error) {
-      console.error("Failed to fatch keywords : ", error);
+      console.error("Failed to fetch keywords : ", error);
     }
     setLoading(false);
   };
@@ -84,13 +84,13 @@ export default function RankTracker() {
         url: newUrl.trim(),
       });
       if (res.data.success) {
-        setKeywords((prev) => [res.data.tracking, ...prev]);
+        setKeywords((prev) => [res.data.data, ...prev]);
         setNewKeyword("");
         setNewUrl("");
         setShowAddModal(false);
 
         // Poll for completion
-        const id = res.data.tracking._id;
+        const id = res.data.data._id;
         const pollInterval = setInterval(async () => {
           try {
             const check = await api.get(`/api/rank/${id}`);
@@ -108,26 +108,65 @@ export default function RankTracker() {
     } catch (err: any) {
       setAddError(err.response?.data?.message || "Failed to add keyword");
     }
-    setAdding(false)
+    setAdding(false);
   };
 
   const handleRefresh = async (id: string) => {
     setRefreshing(id);
-    setTimeout(() => {
+    try {
+      await api.post(`/api/rank/${id}/refresh`);
+
+      // Update status to checking
+      setKeywords((prev) =>
+        prev.map((k) => (k._id === id ? { ...k, status: "checking" } : k)),
+      );
+
+      // poll for completion
+      const pollInterval = setInterval(async () => {
+        try {
+          const check = await api.get(`/api/rank/${id}`);
+          if (check.data.tracking.status !== "checking") {
+            clearInterval(pollInterval);
+            setKeywords((prev) =>
+              prev.map((k) => (k._id === id ? check.data.tracking : k)),
+            );
+            setRefreshing(null);
+          }
+        } catch (error: any) {
+          console.error(error);
+        }
+      }, 3000);
+    } catch (err) {
+      console.error("Refresh failed: ", err);
       setRefreshing(null);
-    }, 1000);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this keyword tracking?")) return;
     setDeleting(id);
-    setTimeout(() => {
-      setDeleting(null);
-    }, 1000);
+    try {
+      await api.delete(`/api/rank/${id}`);
+      setKeywords((prev) => prev.filter((k) => k._id !== id));
+    } catch (error) {
+      console.error("Delete failed : ", error);
+    }
+    setDeleting(null);
   };
 
   const handleToggle = async (id: string) => {
-    console.log(id);
+    try {
+      const res = await api.put(`/api/rank/${id}/toggle`);
+      if (res.data.success) {
+        setKeywords((prev) =>
+          prev.map((k) =>
+            k._id === id ? { ...k, active: res.data.data.active } : k,
+          ),
+        );
+      }
+    } catch (error) {
+      console.error("Toggle failed : ", error);
+    }
   };
 
   const getPositionBadge = (pos: number | null) => {
