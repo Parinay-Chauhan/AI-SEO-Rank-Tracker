@@ -4,7 +4,7 @@ export async function keywordTracking(tracking) {
   try {
     let result;
 
-    // try up to 2 times for reliablity
+    // try up to 2 times for reliability
     for (let attempt = 1; attempt <= 2; attempt++) {
       result = await rankTracker(tracking.keyword, tracking.domain);
       if (result.success && result.data.totalResultScanned > 0) break;
