@@ -1,4 +1,4 @@
-import { asyncHandler } from "../utils/AsyncHandler";
+import { asyncHandler } from "../utils/AsyncHandler.js";
 import { Analysis } from "../models/analysis.model.js";
 import { scrapeUrl } from "../services/scraperService.js";
 import { analyzeSeoData } from "../services/geminiService.js";
