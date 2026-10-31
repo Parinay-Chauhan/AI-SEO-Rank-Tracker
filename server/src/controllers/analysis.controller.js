@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/AsyncHandler";
 import { Analysis } from "../models/analysis.model.js";
 import { scrapeUrl } from "../services/scraperService.js";
 import { analyzeSeoData } from "../services/geminiService.js";
+import { ApiError } from "@google/genai";
 //  Analysis a URL
 
 const analyzeUrl = asyncHandler(async (req, res) => {
@@ -51,11 +52,11 @@ const analyzeUrl = asyncHandler(async (req, res) => {
       }
       // Step 2: Analyze with Gemini AI
 
-      const aiResult = await analyzeSeoData(scrapeResult.data)
+      const aiResult = await analyzeSeoData(scrapeResult.data);
 
-      if(!aiResult.success){
+      if (!aiResult.success) {
         analysis.status = "failed";
-        await analysis.save()
+        await analysis.save();
         return;
       }
 
@@ -74,16 +75,13 @@ const analyzeUrl = asyncHandler(async (req, res) => {
       analysis.status = "completed";
 
       await analysis.save();
-
-
     } catch (bgError) {
       console.error("Background analysis error: ", bgError.message);
       try {
         analysis.status = "failed";
         await analysis.save();
-      } catch (saveError) {
-
-      } console.error("Failed to save failed status : ", saveError.message);
+      } catch (saveError) {}
+      console.error("Failed to save failed status : ", saveError.message);
     }
   } catch (error) {
     console.error("Analyze URL error : ", error.message);
@@ -94,9 +92,30 @@ const analyzeUrl = asyncHandler(async (req, res) => {
 });
 
 // Get analysis by ID
-const getAnalysis = asyncHandler(async (req, res) => {});
+const getAnalysis = asyncHandler(async (req, res) => {
+  try {
+    const analysis = await Analysis.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!analysis) {
+      throw new ApiError(404, "Analysis not found");
+    }
+
+    res.json({ success: true, analysis });
+  } catch (error) {
+    console.error("Get analysis error : ", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 //  Get all analyses for user
-const getAnalyses = asyncHandler(async (req, res) => {});
+const getAnalyses = asyncHandler(async (req, res) => {
+
+  
+
+});
 // Delete analysis
 const deleteAnalysis = asyncHandler(async (req, res) => {});
 
