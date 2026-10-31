@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/AsyncHandler";
 import { Analysis } from "../models/analysis.model.js";
 import { scrapeUrl } from "../services/scraperService.js";
+import { analyzeSeoData } from "../services/geminiService.js";
 //  Analysis a URL
 
 const analyzeUrl = asyncHandler(async (req, res) => {
@@ -49,6 +50,32 @@ const analyzeUrl = asyncHandler(async (req, res) => {
         return;
       }
       // Step 2: Analyze with Gemini AI
+
+      const aiResult = await analyzeSeoData(scrapeResult.data)
+
+      if(!aiResult.success){
+        analysis.status = "failed";
+        await analysis.save()
+        return;
+      }
+
+      // Step 3: Save results
+      analysis.overallScore = aiResult.data.overallScore || 0;
+      analysis.categories = aiResult.data.categories || {};
+      analysis.metaData = aiResult.data.metaData || {};
+      analysis.headings = aiResult.data.headings || {};
+      analysis.links = aiResult.data.links || {};
+      analysis.images = aiResult.data.images || {};
+      analysis.keywords = aiResult.data.keywords || {};
+      analysis.issues = aiResult.data.issues || {};
+      analysis.loadTime = aiResult.data.loadTime || 0;
+      analysis.pageSize = aiResult.data.pageSize || 0;
+      analysis.wordCount = aiResult.data.wordCount || 0;
+      analysis.status = "completed";
+
+      await analysis.save();
+
+
     } catch (bgError) {
       console.error("Background analysis error: ", bgError.message);
       try {
