@@ -112,9 +112,28 @@ const getAnalysis = asyncHandler(async (req, res) => {
 
 //  Get all analyses for user
 const getAnalyses = asyncHandler(async (req, res) => {
+  try {
+    const page = parseInt(req.queery.page) || 1;
+    const limit = parseInt(req.queery.limit) || 10;
+    const skip = (page - 1) * limit;
 
-  
+    const analyses = (await Analysis.find({ userId: req.userId }))
+      .toSorted({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select("-issue -keyword");
 
+    const total = await Analysis.countDocuments({ userId: req.userId });
+
+    res.json({
+      success: true,
+      analyses,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+    });
+  } catch (error) {
+    console.error("Get analyses error : ", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 });
 // Delete analysis
 const deleteAnalysis = asyncHandler(async (req, res) => {});
