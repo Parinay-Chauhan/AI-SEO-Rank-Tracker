@@ -1,4 +1,4 @@
-import mongoose, { Schema, schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const issueSchema = new Schema(
   {
@@ -182,7 +182,7 @@ const analysisSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "processing", "complete", "failed"],
+      enum: ["pending", "processing", "completed", "failed"],
       default: "pending",
     },
   },
@@ -190,5 +190,4 @@ const analysisSchema = new Schema(
   { timestamps: true }
 );
 
-
-export const Analysis = mongoose.model("Analysis", analysisSchema)
+export const Analysis = mongoose.model("Analysis", analysisSchema);
