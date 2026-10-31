@@ -136,6 +136,18 @@ const getAnalyses = asyncHandler(async (req, res) => {
   }
 });
 // Delete analysis
-const deleteAnalysis = asyncHandler(async (req, res) => {});
+const deleteAnalysis = asyncHandler(async (req, res) => {
+  try {
+    await Analysis.findByIdAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    res.json({ success: true, message: "Analysis deleted" });
+  } catch (error) {
+    console.error("Deleted analysis error : ", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 export { analyzeUrl, getAnalysis, getAnalyses, deleteAnalysis };
