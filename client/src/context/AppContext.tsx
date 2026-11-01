@@ -69,7 +69,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (data.success) {
         setUser(data.data);
       }
-    } catch (error) {
+    } catch {
       localStorage.removeItem("token");
       setToken(null);
       setUser(null);
