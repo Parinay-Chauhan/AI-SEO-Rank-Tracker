@@ -26,7 +26,7 @@ const rankEntrySchema = new Schema(
   { _id: false }
 );
 
-const competitorSchema = Schema(
+const competitorSchema = new Schema(
   {
     position: {
       type: Number,
