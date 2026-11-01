@@ -135,6 +135,6 @@ export async function scrapeUrl(url) {
         console.error("[SCRAPER] Browser close failed: ", error.message);
       }
     }
+    return { success: false, error: error.message };
   }
 }
-
