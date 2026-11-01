@@ -109,7 +109,7 @@ const getAnalyses = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
-    .select("-issue -keyword");
+    .select("-issues -keywords");
 
   const total = await Analysis.countDocuments({ userId: req.user._id });
 
