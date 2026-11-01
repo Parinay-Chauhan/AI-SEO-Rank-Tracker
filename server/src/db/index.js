@@ -7,7 +7,7 @@ const connectDB = async () => {
       `${process.env.MONGODB_URI}/${DB_NAME}`
     );
 
-    console.log(`MongoDB connect successfully on port ${process.env.PORT}`);
+    console.log(`MongoDB connected successfully on port ${process.env.PORT}`);
   } catch (error) {
     console.log("MongoDB connection error", error);
     throw error;
