@@ -24,12 +24,16 @@ app.use(cookieParser());
 import userRouter from "./routes/user.route.js";
 import rankRouter from "./routes/rank.route.js";
 import analysisRouter from "./routes/analysis.route.js";
+import { startRankTrackingCron } from "./corn/rankTrackingCorn.js";
 
 //  --------------- routes declaration --------------------
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/rank", rankRouter);
 app.use("/api/v1/analysis", analysisRouter);
+
+// Start cron jobs
+startRankTrackingCron();
 
 app.use(ErrorHandler);
 
