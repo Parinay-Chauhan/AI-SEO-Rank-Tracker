@@ -32,14 +32,14 @@ export async function scrapeUrl(url) {
 
     // Extract all SEO-relevant data from the rendered page
     const scrapedData = await page.evaluate(() => {
-      const getMata = (name) => {
+      const getMeta = (name) => {
         const el =
           document.querySelector(`meta[name="${name}"]`) ||
           document.querySelector(`meta[property="${name}"]`);
         return el ? el.getAttribute("content") || "" : "";
       };
       const title = document.title || "";
-      const description = getMata("description");
+      const description = getMeta("description");
       const canonical =
         document.querySelector('link[rel="canonical"]')?.href || "";
       const robots = getMeta("robots");
@@ -72,7 +72,7 @@ export async function scrapeUrl(url) {
       allLinks.forEach((link) => {
         try {
           const href = link.href;
-          if (href.startWith("mailto: ") || href.startsWith("tel:")) return;
+          if (href.startsWith("mailto: ") || href.startsWith("tel:")) return;
           const linkUrl = new URL(href);
           if (linkUrl.hostname === currentHost) internalLinks++;
           else externalLinks++;
