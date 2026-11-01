@@ -17,7 +17,6 @@ import {
   Calendar,
   Loader2,
 } from "lucide-react";
-import { dummyWebsiteRanking } from "../assets/assets";
 import { useApp } from "../context/AppContext";
 // import { clearInterval } from "node:timers";
 
@@ -74,7 +73,7 @@ export default function RankDetail() {
         }
         setTracking(res.data.tracking);
       }
-    } catch {}
+    } catch { /* ignore error */ }
     setLoading(false);
   };
 
