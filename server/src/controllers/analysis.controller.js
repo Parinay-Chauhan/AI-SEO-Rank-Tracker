@@ -18,7 +18,7 @@ const analyzeUrl = asyncHandler(async (req, res) => {
 
     let validUrl;
     try {
-      validUrl = new URL(url.startWith("http") ? url : `https://${url}`);
+      validUrl = new URL(url.startsWith("http") ? url : `https://${url}`);
     } catch (error) {
       return res
         .status(400)
@@ -28,7 +28,7 @@ const analyzeUrl = asyncHandler(async (req, res) => {
     //    Create analysis record with pending status
 
     const analysis = await Analysis.create({
-      userId: req.userId,
+      userId: req.user._id,
       url: validUrl.href,
       status: "processing",
     });
@@ -96,7 +96,7 @@ const getAnalysis = asyncHandler(async (req, res) => {
   try {
     const analysis = await Analysis.findOne({
       _id: req.params.id,
-      userId: req.userId,
+      userId: req.user._id,
     });
 
     if (!analysis) {
@@ -113,17 +113,17 @@ const getAnalysis = asyncHandler(async (req, res) => {
 //  Get all analyses for user
 const getAnalyses = asyncHandler(async (req, res) => {
   try {
-    const page = parseInt(req.queery.page) || 1;
-    const limit = parseInt(req.queery.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const analyses = (await Analysis.find({ userId: req.userId }))
-      .toSorted({ createdAt: -1 })
+    const analyses = await Analysis.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .select("-issue -keyword");
 
-    const total = await Analysis.countDocuments({ userId: req.userId });
+    const total = await Analysis.countDocuments({ userId: req.user._id });
 
     res.json({
       success: true,
