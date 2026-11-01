@@ -42,7 +42,7 @@ const competitorSchema = new Schema(
     },
     title: {
       type: String,
-      required: "",
+      required: true,
     },
     snippet: {
       type: String,
