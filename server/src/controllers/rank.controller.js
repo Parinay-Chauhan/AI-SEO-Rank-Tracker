@@ -45,96 +45,97 @@ const addKeyword = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .json(new ApiResponse(201, tracking, "Keyword tracking started"));
+});
 
-  const getKeywords = asyncHandler(async (req, res) => {
-    const keywords = await KeywordTracking.find({ userId: req.user._id })
-      .sort({ createdAt: -1 })
-      .select("-rankHistory");
+const getKeywords = asyncHandler(async (req, res) => {
+  const keywords = await KeywordTracking.find({ userId: req.user._id })
+    .sort({ createdAt: -1 })
+    .select("-rankHistory");
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, keywords, "Keywords fetched successfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, keywords, "Keywords fetched successfully"));
+});
+
+const getKeyword = asyncHandler(async (req, res) => {
+  const tracking = await KeywordTracking.findOne({
+    _id: req.params.id,
+    userId: req.user._id,
   });
 
-  const getKeyword = asyncHandler(async (req, res) => {
-    const tracking = await KeywordTracking.findOne({
-      _id: req.params.id,
-      userId: req.user._id,
-    });
+  if (!tracking) {
+    throw new ApiError(404, "Keyword tracking not found");
+  }
 
-    if (!tracking) {
-      throw new ApiError(404, "Keyword tracking not found");
-    }
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { tracking },
+        "Keyword tracking fetched successfully"
+      )
+    );
+});
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { tracking },
-          "Keyword tracking fetched successfully"
-        )
-      );
+const refreshKeyword = asyncHandler(async (req, res) => {
+  const tracking = await KeywordTracking.findOne({
+    _id: req.params.id,
+    userId: req.user._id,
   });
 
-  const refreshKeyword = asyncHandler(async (req, res) => {
-    const tracking = await KeywordTracking.findOne({
-      _id: req.params.id,
-      userId: req.user._id,
-    });
+  if (!tracking) {
+    throw new ApiError(404, "Keyword tracking not found");
+  }
 
-    if (!tracking) {
-      throw new ApiError(404, "Keyword tracking not found");
-    }
+  tracking.status = "checking";
+  await tracking.save();
 
-    tracking.status = "checking";
-    await tracking.save();
+  void keywordTracking(tracking);
 
-    void keywordTracking(tracking);
+  return res
+    .status(202)
+    .json(new ApiResponse(202, tracking, "Rank check started"));
+});
 
-    return res
-      .status(202)
-      .json(new ApiResponse(202, tracking, "Rank check started"));
+const deleteKeyword = asyncHandler(async (req, res) => {
+  const tracking = await KeywordTracking.findOneAndDelete({
+    _id: req.params.id,
+    userId: req.user._id,
   });
 
-  const deleteKeyword = asyncHandler(async (req, res) => {
-    const tracking = await KeywordTracking.findOneAndDelete({
-      _id: req.params.id,
-      userId: req.user._id,
-    });
+  if (!tracking) {
+    throw new ApiError(404, "Keyword tracking not found");
+  }
 
-    if (!tracking) {
-      throw new ApiError(404, "Keyword tracking not found");
-    }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Keyword tracking deleted"));
+});
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, {}, "Keyword tracking deleted"));
+const toggleTracking = asyncHandler(async (req, res) => {
+  const tracking = await KeywordTracking.findOne({
+    _id: req.params.id,
+    userId: req.user._id,
   });
 
-  const toggleTracking = asyncHandler(async (req, res) => {
-    const tracking = await KeywordTracking.findOne({
-      _id: req.params.id,
-      userId: req.user._id,
-    });
+  if (!tracking) {
+    throw new ApiError(404, "Keyword tracking not found");
+  }
 
-    if (!tracking) {
-      throw new ApiError(404, "Keyword tracking not found");
-    }
+  tracking.active = !tracking.active;
+  await tracking.save();
 
-    tracking.active = !tracking.active;
-    await tracking.save();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, tracking, "Tracking status updated"));
+});
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, tracking, "Tracking status updated"));
-  });
-
-  export {
-    addKeyword,
-    getKeyword,
-    getKeywords,
-    refreshKeyword,
-    deleteKeyword,
-    toggleTracking,
-  };
+export {
+  addKeyword,
+  getKeyword,
+  getKeywords,
+  refreshKeyword,
+  deleteKeyword,
+  toggleTracking,
+};
