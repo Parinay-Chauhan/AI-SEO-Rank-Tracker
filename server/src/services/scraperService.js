@@ -43,7 +43,7 @@ export async function scrapeUrl(url) {
       const canonical =
         document.querySelector('link[rel="canonical"]')?.href || "";
       const robots = getMeta("robots");
-      const ogTitle = getMeta("og: title");
+      const ogTitle = getMeta("og:title");
       const ogDescription = getMeta("og:description");
       const ogImage = getMeta("og:image");
       const twitterCard = getMeta("twitter:card");
@@ -72,7 +72,7 @@ export async function scrapeUrl(url) {
       allLinks.forEach((link) => {
         try {
           const href = link.href;
-          if (href.startsWith("mailto: ") || href.startsWith("tel:")) return;
+          if (href.startsWith("mailto:") || href.startsWith("tel:")) return;
           const linkUrl = new URL(href);
           if (linkUrl.hostname === currentHost) internalLinks++;
           else externalLinks++;
