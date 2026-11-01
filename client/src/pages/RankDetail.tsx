@@ -65,7 +65,7 @@ export default function RankDetail() {
 
   const fetchTracking = async () => {
     try {
-      const res = await api.get(`/api/rank/${id}`);
+      const res = await api.get(`/api/v1/rank/${id}`);
       if (res.data.success) {
         if (res.data.tracking.status === "checking") {
           setTimeout(fetchTracking, 3000);
@@ -82,12 +82,12 @@ export default function RankDetail() {
     if (!tracking) return;
     setRefreshing(true);
     try {
-      await api.post(`/api/rank/${tracking._id}/refresh`);
+      await api.post(`/api/v1/rank/${tracking._id}/refresh`);
       setTracking((prev) => (prev ? { ...prev, status: "checking" } : null));
 
       const pollInterval = setInterval(async () => {
         try {
-          const check = await api.get(`/api/rank/${tracking._id}`);
+          const check = await api.get(`/api/v1/rank/${tracking._id}`);
           if (check.data.tracking.status !== "checking") {
             clearInterval(pollInterval);
             setTracking(check.data.tracking);

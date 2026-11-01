@@ -62,7 +62,7 @@ export default function Analyze() {
 
       setCurrentStep(0);
 
-      const res = await api.post("/api/analysis/analyze", {
+      const res = await api.post("/api/v1/analysis/analyze", {
         url: targetUrl.startsWith("http") ? targetUrl : `https://${targetUrl}`,
       });
       if (!res.data.success) {
@@ -89,7 +89,7 @@ export default function Analyze() {
           return;
         }
         try {
-          const check = await api.get(`/api/analysis/${id}`);
+          const check = await api.get(`/api/v1/analysis/${id}`);
           const analysis = check.data.analysis;
 
           if (analysis.status === "completed") {

@@ -62,7 +62,7 @@ export default function RankTracker() {
 
   const fetchKeywords = async () => {
     try {
-      const res = await api.get("/api/rank/list");
+      const res = await api.get("/api/v1/rank/list");
       if (res.data.success) {
         setKeywords(res.data.data);
       }
@@ -79,7 +79,7 @@ export default function RankTracker() {
     setAdding(true);
     setAddError("");
     try {
-      const res = await api.post("/api/rank/add", {
+      const res = await api.post("/api/v1/rank/add", {
         keyword: newKeyword.trim(),
         url: newUrl.trim(),
       });
@@ -93,7 +93,7 @@ export default function RankTracker() {
         const id = res.data.data._id;
         const pollInterval = setInterval(async () => {
           try {
-            const check = await api.get(`/api/rank/${id}`);
+            const check = await api.get(`/api/v1/rank/${id}`);
             if (check.data.tracking.status !== "checking") {
               clearInterval(pollInterval);
               setKeywords((prev) =>
@@ -114,7 +114,7 @@ export default function RankTracker() {
   const handleRefresh = async (id: string) => {
     setRefreshing(id);
     try {
-      await api.post(`/api/rank/${id}/refresh`);
+      await api.post(`/api/v1/rank/${id}/refresh`);
 
       // Update status to checking
       setKeywords((prev) =>
@@ -124,7 +124,7 @@ export default function RankTracker() {
       // poll for completion
       const pollInterval = setInterval(async () => {
         try {
-          const check = await api.get(`/api/rank/${id}`);
+          const check = await api.get(`/api/v1/rank/${id}`);
           if (check.data.tracking.status !== "checking") {
             clearInterval(pollInterval);
             setKeywords((prev) =>
@@ -146,7 +146,7 @@ export default function RankTracker() {
     if (!confirm("Delete this keyword tracking?")) return;
     setDeleting(id);
     try {
-      await api.delete(`/api/rank/${id}`);
+      await api.delete(`/api/v1/rank/${id}`);
       setKeywords((prev) => prev.filter((k) => k._id !== id));
     } catch (error) {
       console.error("Delete failed : ", error);
@@ -156,7 +156,7 @@ export default function RankTracker() {
 
   const handleToggle = async (id: string) => {
     try {
-      const res = await api.put(`/api/rank/${id}/toggle`);
+      const res = await api.put(`/api/v1/rank/${id}/toggle`);
       if (res.data.success) {
         setKeywords((prev) =>
           prev.map((k) =>

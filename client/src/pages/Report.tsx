@@ -67,7 +67,7 @@ export default function Report() {
 
     const fetchAnalysis = async () => {
         try {
-            const res = await api.get(`/api/analysis/${id}`);
+            const res = await api.get(`/api/v1/analysis/${id}`);
             if(res.data.success){
                 if(res.data.analysis.status === "processing"){
                     // Poll for completion
