@@ -24,7 +24,7 @@ app.use(cookieParser());
 import userRouter from "./routes/user.route.js";
 import rankRouter from "./routes/rank.route.js";
 import analysisRouter from "./routes/analysis.route.js";
-import { startRankTrackingCron } from "./corn/rankTrackingCorn.js";
+import { startRankTrackingCron } from "./cron/rankTrackingCron.js";
 
 //  --------------- routes declaration --------------------
 
