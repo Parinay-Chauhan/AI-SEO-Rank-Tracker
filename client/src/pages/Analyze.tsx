@@ -11,7 +11,6 @@ import {
   AlertCircle,
   Loader2,
   ArrowRightIcon,
-  AlarmCheck,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
@@ -104,7 +103,7 @@ export default function Analyze() {
             // Still processing - advance visual steps
             if (attempt > 5) setCurrentStep(2);
           }
-        } catch {}
+        } catch { /* ignore polling error */ }
       }, 2000);
     } catch (err: any) {
       setError(
