@@ -95,7 +95,7 @@ export default function RankDetail() {
         } catch (error: any) {
           console.error(error);
         }
-      });
+      }, 3000);
     } catch {
       setRefreshing(false);
     }
