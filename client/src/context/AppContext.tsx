@@ -35,7 +35,12 @@ interface AppContextType {
   logout: () => Promise<void>;
 }
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL ||
+  import.meta.env.BACKEND_URL ||
+  (import.meta.env.PROD
+    ? "https://ai-seo-rank-tracker-n0xd.onrender.com"
+    : "http://localhost:8000");
 
 const api = axios.create({
   baseURL: BACKEND_URL,
