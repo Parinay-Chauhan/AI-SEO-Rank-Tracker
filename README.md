@@ -5,7 +5,7 @@
 ![Rank Pilot Banner](https://img.shields.io/badge/Rank%20Pilot-AI%20SEO%20SaaS-6366f1?style=for-the-badge&logo=rocket&logoColor=white)
 [![Vercel](https://img.shields.io/badge/Deployed%20with-Vercel-black?style=for-the-badge&logo=vercel)](https://ai-seo-rank-tracker-seven.vercel.app)
 [![Render](https://img.shields.io/badge/Hosted%20on-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://ai-seo-rank-tracker-n0xd.onrender.com)
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg?style=for-the-badge)](https://opensource.org/licenses/ISC)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 <br />
 
@@ -244,5 +244,5 @@ cd AI-SEO-Rank-Tracker
 
 ## 📄 License
 
-This project is licensed under the [ISC License](https://opensource.org/licenses/ISC).
+This project is licensed under the [MIT License](LICENSE).
 

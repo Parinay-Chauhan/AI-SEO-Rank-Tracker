@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@browserbasehq/sdk": "^2.22.0",
     "@google/genai": "^2.32.0",
