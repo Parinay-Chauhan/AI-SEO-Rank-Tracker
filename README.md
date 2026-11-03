@@ -189,6 +189,13 @@ cd AI-SEO-Rank-Tracker
 
 ## 📡 REST API Reference
 
+### 💓 Health Check (`/api/v1/health`)
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/` | Root API ping for uptime monitors | ❌ |
+| `GET` | `/health` | Lightweight status check | ❌ |
+| `GET` | `/api/v1/health` | Comprehensive health telemetry (uptime, timestamp) | ❌ |
+
 ### 🔐 Authentication (`/api/v1/users`)
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :---: |

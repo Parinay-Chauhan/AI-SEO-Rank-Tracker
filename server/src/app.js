@@ -35,8 +35,27 @@ app.use(cookieParser());
 
 // --------- routes -----------------
 
+// Root and Health check endpoints for UptimeRobot / ping services
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "active",
+    service: "Rank Pilot API",
+    message: "Server is live and running",
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "active",
+    message: "Server is healthy",
+    uptime: `${Math.floor(process.uptime())}s`,
+    timestamp: new Date().toISOString(),
+  });
+});
+
 //  ------------------- import routes ----------------------
 
+import healthRouter from "./routes/health.route.js";
 import userRouter from "./routes/user.route.js";
 import rankRouter from "./routes/rank.route.js";
 import analysisRouter from "./routes/analysis.route.js";
@@ -44,6 +63,7 @@ import { startRankTrackingCron } from "./cron/rankTrackingCron.js";
 
 //  --------------- routes declaration --------------------
 
+app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/rank", rankRouter);
 app.use("/api/v1/analysis", analysisRouter);
