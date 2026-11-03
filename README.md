@@ -245,3 +245,4 @@ cd AI-SEO-Rank-Tracker
 ## 📄 License
 
 This project is licensed under the [ISC License](https://opensource.org/licenses/ISC).
+
