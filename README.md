@@ -1,4 +1,4 @@
-# 🚀 Rank Pilot — AI-Powered SEO Analyzer & Keyword Rank Tracker
+# 🚀 AI-Powered SEO Analyzer & Keyword Rank Tracker
 
 <div align="center">
 
