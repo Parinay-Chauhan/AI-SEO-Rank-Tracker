@@ -55,22 +55,53 @@ export const homeHowItWorksData = [
     },
 ];
 
-export const homefooterLinks = [
+export interface FooterLink {
+    name: string;
+    path?: string;
+    href?: string;
+    action?: string;
+}
+
+export interface FooterSection {
+    title: string;
+    links: FooterLink[];
+}
+
+export const homefooterLinks: FooterSection[] = [
     {
         title: "Product",
-        links: ["Features", "Pricing", "API", "Browser Extension"],
+        links: [
+            { name: "Features", path: "/features" },
+            { name: "Pricing", path: "/pricing" },
+            { name: "API", path: "/api-docs" },
+            { name: "Browser Extension", action: "extension-modal" },
+        ],
     },
     {
         title: "Resources",
-        links: ["Documentation", "Blog", "SEO Guide", "Support"],
+        links: [
+            { name: "Documentation", path: "/api-docs" },
+            { name: "SEO Guide", path: "/features" },
+            { name: "System Status", href: "https://ai-seo-rank-tracker-n0xd.onrender.com/api/v1/health" },
+            { name: "Support", href: "mailto:support@rankpilot.dev" },
+        ],
     },
     {
         title: "Company",
-        links: ["About Us", "Careers", "Contact", "Press"],
+        links: [
+            { name: "About Us", path: "/features" },
+            { name: "Careers", path: "/features" },
+            { name: "Contact", href: "mailto:support@rankpilot.dev" },
+            { name: "Security", path: "/privacy" },
+        ],
     },
     {
         title: "Legal",
-        links: ["Privacy Policy", "Terms of Service", "Cookie Policy"],
+        links: [
+            { name: "Privacy Policy", path: "/privacy" },
+            { name: "Terms of Service", path: "/terms" },
+            { name: "Cookie Policy", path: "/privacy" },
+        ],
     },
 ];
 
