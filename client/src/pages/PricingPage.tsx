@@ -103,6 +103,19 @@ export default function PricingPage() {
     },
   ];
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.a,
+      },
+    })),
+  };
+
   return (
     <div className="min-h-screen pt-16 md:pt-24 bg-background text-foreground flex flex-col justify-between">
       <SEO
@@ -110,6 +123,7 @@ export default function PricingPage() {
         description="Choose the ideal Rank Pilot plan. Affordable tiers for bloggers, SEO agencies, and startups. Track keywords on Google SERP with AI audits."
         canonical="https://ai-seo-rank-tracker-seven.vercel.app/pricing"
         keywords="SEO tool pricing, rank tracker pricing, AI SEO plans, affordable SERP tracker"
+        schema={faqSchema}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 w-full">
         {/* Header */}
