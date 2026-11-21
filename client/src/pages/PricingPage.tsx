@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Footer from "../components/home/Footer";
 import { useApp } from "../context/AppContext";
+import SEO from "../components/SEO";
 
 export default function PricingPage() {
   const { user } = useApp();
@@ -104,6 +105,12 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen pt-16 md:pt-24 bg-background text-foreground flex flex-col justify-between">
+      <SEO
+        title="Pricing Plans & Subscriptions"
+        description="Choose the ideal Rank Pilot plan. Affordable tiers for bloggers, SEO agencies, and startups. Track keywords on Google SERP with AI audits."
+        canonical="https://ai-seo-rank-tracker-seven.vercel.app/pricing"
+        keywords="SEO tool pricing, rank tracker pricing, AI SEO plans, affordable SERP tracker"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 w-full">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
@@ -413,3 +420,4 @@ export default function PricingPage() {
     </div>
   );
 }
+

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Footer from "../components/home/Footer";
 import { useApp } from "../context/AppContext";
+import SEO from "../components/SEO";
 
 export default function FeaturesPage() {
   const { user } = useApp();
@@ -113,6 +114,12 @@ export default function FeaturesPage() {
 
   return (
     <div className="min-h-screen pt-16 md:pt-24 bg-background text-foreground flex flex-col justify-between">
+      <SEO
+        title="Features — Gemini 2.5 Audits & SERP Rank Tracking"
+        description="Discover Rank Pilot capabilities: Google Gemini 2.5 Flash technical audits, automated Google SERP rank tracking, hybrid Playwright scraper, and keyword density mapping."
+        canonical="https://ai-seo-rank-tracker-seven.vercel.app/features"
+        keywords="Gemini SEO audit, Google SERP tracker, keyword ranking, SEO features, Playwright scraper"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 w-full">
         {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-16">

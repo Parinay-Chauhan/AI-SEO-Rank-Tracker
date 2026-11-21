@@ -1,0 +1,16 @@
+{
+  "name": "Rank Pilot — AI SEO Analyzer",
+  "short_name": "RankPilot",
+  "description": "AI-powered SEO audits and real-time Google SERP tracking",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
