@@ -18,6 +18,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import SEO from "../components/SEO";
 // import { clearInterval } from "node:timers";
 
 interface RankHistoryEntry {
@@ -328,6 +329,11 @@ export default function RankDetail() {
 
   return (
     <div className="min-h-screen pt-16 md:pt-24 bg-background">
+      <SEO
+        title={`Keyword Details: "${tracking.keyword}"`}
+        description="Historical search position chart and competitor SERP details."
+        noindex={true}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Back + Header */}
         <div className="mb-8">

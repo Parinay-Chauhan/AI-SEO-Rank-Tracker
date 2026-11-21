@@ -22,6 +22,7 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import SEO from "../components/SEO";
 
 interface KeywordItem {
   _id: string;
@@ -253,7 +254,12 @@ export default function RankTracker() {
   }, []);
 
   return (
-    <div className="min-h-scree pt-16 md:pt-24 bg-background">
+    <div className="min-h-screen pt-16 md:pt-24 bg-background">
+      <SEO
+        title="SERP Rank Tracker"
+        description="Monitor keyword search positions on Google in real-time."
+        noindex={true}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">

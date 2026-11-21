@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import ScoreGauge from "../components/ScoreGauge";
 import { useApp } from "../context/AppContext";
+import SEO from "../components/SEO";
 
 interface AnalysisItem {
   _id: string;
@@ -102,6 +103,11 @@ export default function History() {
 
   return (
     <div className="min-h-screen pt-16 md:pt-24 bg-background">
+      <SEO
+        title="Analysis History"
+        description="Audit report archive and website check history."
+        noindex={true}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">

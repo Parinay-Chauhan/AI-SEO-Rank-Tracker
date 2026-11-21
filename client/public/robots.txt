@@ -1,0 +1,46 @@
+# Robots.txt for Rank Pilot (AI SEO Analyzer & Google SERP Rank Tracker)
+# Host: https://ai-seo-rank-tracker-seven.vercel.app
+
+User-agent: *
+Allow: /
+Allow: /features
+Allow: /pricing
+Allow: /api-docs
+Allow: /privacy
+Allow: /terms
+Allow: /site.webmanifest
+Allow: /favicon.svg
+Allow: /og-image.svg
+
+# Disallow authenticated, user-specific, and private operational endpoints
+Disallow: /dashboard
+Disallow: /analyze
+Disallow: /report/
+Disallow: /history
+Disallow: /rank-tracker
+Disallow: /rank/
+Disallow: /login
+Disallow: /register
+Disallow: /api/
+
+# AI Crawlers & Answer Engines (Permit access to public knowledge pages)
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# XML Sitemap Location
+Sitemap: https://ai-seo-rank-tracker-seven.vercel.app/sitemap.xml
