@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, Lock, Loader2, ChartNoAxesColumnIcon, User2Icon } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import toast from "react-hot-toast";
+import SEO from "../components/SEO";
 
 export default function Login({ state }: { state: string }) {
     const [isLoginState, setIsLoginState] = useState(state === "login");
@@ -41,6 +42,11 @@ export default function Login({ state }: { state: string }) {
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
+            <SEO
+                title={isLoginState ? "Sign In" : "Create Account"}
+                description="Access your Rank Pilot account to track rankings and analyze websites."
+                noindex={true}
+            />
             <div className="w-full max-w-md">
                 {/* Logo */}
                 <div className="text-center mb-8">
