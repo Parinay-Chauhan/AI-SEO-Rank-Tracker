@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#09090b"/>
+  <circle cx="600" cy="315" r="300" fill="#3b82f6" fill-opacity="0.12" filter="blur(120px)"/>
+  <circle cx="350" cy="200" r="200" fill="#10b981" fill-opacity="0.08" filter="blur(100px)"/>
+  
+  <!-- Grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#27272a" stroke-width="0.8" stroke-opacity="0.5"/>
+    </pattern>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)" />
+  
+  <!-- Logo Icon Container -->
+  <rect x="540" y="140" width="120" height="120" rx="28" fill="#18181b" stroke="#3f3f46" stroke-width="2"/>
+  <!-- Chart Bars -->
+  <path d="M575 225 V195" stroke="#38bdf8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M600 225 V165" stroke="#818cf8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M625 225 V180" stroke="#34d399" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Brand Title -->
+  <text x="600" y="340" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="800" fill="url(#textGrad)" letter-spacing="-1.5">
+    Rank Pilot
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="405" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="500" fill="#a1a1aa">
+    AI-Powered SEO Audits &amp; Real-Time Google SERP Rank Tracking
+  </text>
+
+  <!-- Badges Pill -->
+  <g transform="translate(370, 470)">
+    <rect width="460" height="46" rx="23" fill="#18181b" stroke="#27272a" stroke-width="1.5"/>
+    <text x="230" y="29" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#38bdf8">
+      Gemini 2.5 Flash Audits  •  Playwright Engine  •  24/7 Monitoring
+    </text>
+  </g>
+</svg>

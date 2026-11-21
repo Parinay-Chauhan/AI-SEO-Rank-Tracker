@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom";
 import { FileText, ArrowLeft } from "lucide-react";
 import Footer from "../components/home/Footer";
+import SEO from "../components/SEO";
 
 export default function TermsOfService() {
   return (
     <div className="min-h-screen pt-16 md:pt-24 bg-background text-foreground flex flex-col justify-between">
+      <SEO
+        title="Terms of Service"
+        description="Rank Pilot terms of service: guidelines, fair-use policies, and usage conditions for our AI SEO rank tracker."
+        canonical="https://ai-seo-rank-tracker-seven.vercel.app/terms"
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 w-full">
         <Link
           to="/"
