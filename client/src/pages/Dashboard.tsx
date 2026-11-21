@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { SearchIcon, ArrowRightIcon, BarChart3Icon, GlobeIcon, TrendingUpIcon } from "lucide-react";
 import AnalysesCard from "../components/AnalysesCard";
 import { useApp } from "../context/AppContext";
+import SEO from "../components/SEO";
 
 
 interface AnalysisSummary {
@@ -62,6 +63,11 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen pt-16 md:pt-24 bg-background">
+            <SEO
+                title="SEO Dashboard"
+                description="Manage your tracked websites and analyze performance."
+                noindex={true}
+            />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
                 {/* Header */}
                 <div className="mb-8">
